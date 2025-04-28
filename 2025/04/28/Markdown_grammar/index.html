@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>Markdown基本语法 | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Markdown基本语法</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 28, 2025&nbsp;&nbsp;16:30:11</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/markdown/">markdown</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="markdown-的基本语法"><a href="#markdown-的基本语法" class="headerlink" title="markdown 的基本语法"></a>markdown 的基本语法</h1><h2 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h2><ul>
+<li><p><strong>文本书写</strong></p>
+<p>直接写入内容即可。</p>
+</li>
+<li><p><strong>换行</strong></p>
+<p>有些编辑器需要在行尾加两个空格，有些可以直接换行。</p>
+</li>
+<li><p><strong>加粗和斜体</strong></p>
+<ul>
+<li>在文本的左右两侧添加两个<code>*</code>生成加粗文本。</li>
+<li>在文本的左右两侧添加一个<code>*</code>生成斜体文本。</li>
+<li>在文本的左右两侧添加三个<code>*</code>生成斜体加粗文本。</li>
+<li>所有’*’都可以用<code>_</code>代替，但更推荐使用<code>*</code>。</li>
+</ul>
+</li>
+<li><p><strong>删除线</strong></p>
+<p>在文本左右两侧添加两个<code>~</code>使文本带上删除线，可以和加粗和斜体混合使用。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">这是第一段文本。</span><br><span class="line"></span><br><span class="line">这是第二段文本。</span><br><span class="line"></span><br><span class="line"><span class="strong">**这是加粗文本**</span></span><br><span class="line"></span><br><span class="line"><span class="strong">__这也是加粗文本__</span></span><br><span class="line"></span><br><span class="line"><span class="emphasis">*这是斜体文本*</span></span><br><span class="line"></span><br><span class="line"><span class="emphasis">_这也是斜体文本_</span></span><br><span class="line"></span><br><span class="line"><span class="strong">**<span class="emphasis">*这是斜体加粗文本*</span>**</span></span><br><span class="line"></span><br><span class="line">~~这是带删除线的文本~~</span><br><span class="line"></span><br><span class="line"><span class="strong">**<span class="emphasis">*~~同样可以混和使用~~*</span>**</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>效果展示</strong></p>
+<p>这是第一段文本。</p>
+<p>这是第二段文本。</p>
+<p><strong>这是加粗文本</strong></p>
+<p><strong>这也是加粗文本</strong></p>
+<p><em>这是斜体文本</em></p>
+<p><em>这也是斜体文本</em></p>
+<p><em><strong>这是斜体加粗文本</strong></em></p>
+<p><del>这是带删除线的文本</del></p>
+<p><em><strong><del>同样可以混和使用</del></strong></em></p>
+</li>
+</ul>
+<hr>
+<h2 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h2><ul>
+<li><p><strong>生成分割线</strong></p>
+<p>在一行中写入三个或以上的<code>*</code>生成分割线</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="strong">***</span></span><br><span class="line"><span class="strong">**</span>**</span><br><span class="line"><span class="bullet">*</span> * <span class="emphasis">*</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<hr>
+<hr>
+<hr>
+</li>
+</ul>
+<hr>
+<h2 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h2><ul>
+<li><p><strong>生成标题</strong></p>
+<p>在文本前添加<code>#</code>生成标题，一个<code>#</code>为一级标题两个<code>#</code>为二级标题，以此类推。最多可以有六级标题。注意最后一个<code>#</code>后面要带一个空格。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># 这是一级标题</span></span><br><span class="line"></span><br><span class="line"><span class="section">## 这是二级标题</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 这是三级标题</span></span><br><span class="line"></span><br><span class="line"><span class="section">#### ......</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<h1 id="这是一级标题"><a href="#这是一级标题" class="headerlink" title="这是一级标题"></a>这是一级标题</h1><h2 id="这是二级标题"><a href="#这是二级标题" class="headerlink" title="这是二级标题"></a>这是二级标题</h2><h3 id="这是三级标题"><a href="#这是三级标题" class="headerlink" title="这是三级标题"></a>这是三级标题</h3><h4 id="……"><a href="#……" class="headerlink" title="……"></a>……</h4></li>
+</ul>
+<hr>
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><h3 id="无序列表"><a href="#无序列表" class="headerlink" title="无序列表"></a>无序列表</h3><ul>
+<li><p><strong>生成无序列表</strong></p>
+<p>在一行文本的行首添加<code>* </code>生成无序列表。</p>
+<p><code>*</code>可以用<code>+</code>或<code>-</code>替代，但不要混着用。</p>
+<p>注意<code>*</code>后要带空格。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">*</span> 这是第一项任务</span><br><span class="line"><span class="bullet">*</span> 这是第二项任务</span><br><span class="line"><span class="bullet">*</span> 这是第三项任务</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<ul>
+<li>这是第一项任务</li>
+<li>这是第二项任务</li>
+<li>这是第三项任务</li>
+</ul>
+</li>
+</ul>
+<h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><ul>
+<li><p><strong>生成有序列表</strong></p>
+<p>在一行文本的行首添加<code>数字</code>+<code>.</code>生成有序列表。</p>
+<p>第一项可以自定义，后面只能接着第一项递增。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> 这是第一项任务</span><br><span class="line"><span class="bullet">2.</span> 这是第二项任务</span><br><span class="line"><span class="bullet">3.</span> 这是第三项任务</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<ol>
+<li>这是第一项任务</li>
+<li>这是第二项任务</li>
+<li>这是第三项任务</li>
+</ol>
+</li>
+</ul>
+<h3 id="列表嵌套"><a href="#列表嵌套" class="headerlink" title="列表嵌套"></a>列表嵌套</h3><ul>
+<li><p><strong>语法</strong></p>
+<p>在一行列表下输入四个空格（Tab）。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> 这是一级列表</span><br><span class="line"><span class="bullet">    1.</span> 这是二级列表</span><br><span class="line"><span class="bullet">    	1.</span> 这是三级列表</span><br><span class="line"><span class="bullet">2.</span> 这是第二项任务</span><br><span class="line"><span class="bullet">3.</span> 这是第三项任务</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<ol>
+<li>这是一级列表<ol>
+<li>这是二级列表<ol>
+<li>这是三级列表</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>这是第二项任务</li>
+<li>这是第三项任务</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ul>
+<li><p><strong>代码块</strong></p>
+<ul>
+<li><p><strong>语法</strong></p>
+<p>在输入两行<code>~~~</code>，在第一行<code>~~~</code>右边输入代码所用的语言。</p>
+<p>在两行<code>~~~</code>之间输入代码。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">```c++</span></span><br><span class="line"><span class="code">#include&lt;iostream&gt;</span></span><br><span class="line"><span class="code">using namespace std;</span></span><br><span class="line"><span class="code">int main()</span></span><br><span class="line"><span class="code">&#123;</span></span><br><span class="line"><span class="code">	cout&lt;&lt;&quot;hello world&quot;&lt;&lt;endl;</span></span><br><span class="line"><span class="code">	return 0;</span></span><br><span class="line"><span class="code">&#125;</span></span><br><span class="line"><span class="code">```</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;hello world&quot;</span>&lt;&lt;endl;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>行内代码</strong></p>
+<ul>
+<li><p><strong>语法</strong></p>
+<p>用**&#96;&#96;**(数字1左边)包裹代码</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">行内代码<span class="code">`printf()`</span>展示</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<p>行内代码<code>printf()</code>展示</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a><strong>引用</strong></h2><ul>
+<li><p><strong>语法</strong></p>
+<p>在行首输入<code>&gt;</code>生成引用区域。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;床前明月光，疑是地上霜。</span><br><span class="line"><span class="quote">&gt;</span></span><br><span class="line"><span class="quote">&gt;举头望明月，低头思故乡。</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<blockquote>
+<p>床前明月光，疑是地上霜。</p>
+<p>举头望明月，低头思故乡。</p>
+</blockquote>
+</li>
+<li><p><strong>嵌套引用</strong></p>
+<ul>
+<li><p><strong>语法</strong></p>
+<p>每多一层嵌套就加一个<code>&gt;</code>。</p>
+</li>
+<li><p><strong>代码展示</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;这是第一层引用</span><br><span class="line">&gt;&gt;这是第二层引用</span><br><span class="line">&gt;&gt;&gt;这是第三层引用</span><br><span class="line">&gt;&gt;&gt;&gt;这是第四层引用</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<blockquote>
+<p>这是第一层引用</p>
+<blockquote>
+<p>这是第二层引用</p>
+<blockquote>
+<p>这是第三层引用</p>
+<blockquote>
+<p>这是第四层引用</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="超链接与脚注"><a href="#超链接与脚注" class="headerlink" title="超链接与脚注"></a>超链接与脚注</h2><h3 id="超链接"><a href="#超链接" class="headerlink" title="超链接"></a><strong>超链接</strong></h3><ul>
+<li><p><strong>语法</strong></p>
+<p>使用<code>[]</code>包裹要添加超链接的文本，后面紧跟一个小括号在里面填入链接。</p>
+</li>
+</ul>
+<h3 id="脚注"><a href="#脚注" class="headerlink" title="脚注"></a>脚注</h3><ul>
+<li><p><strong>语法</strong></p>
+<p>在要添加脚注的地方输入<code>[]</code>，在其中写入<code>^</code>+<code>脚注</code>。</p>
+</li>
+<li><p><strong>注释</strong></p>
+<p>同样的方法输入对应的脚注，输入一个<code>:</code>后面输入注释。</p>
+</li>
+</ul>
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">前往[<span class="string">官网</span>](<span class="link">https://DizzyGreen.github.io</span>)[<span class="string">^a</span>]了解更多关于xxx[^1]的内容</span><br><span class="line"></span><br><span class="line">[<span class="symbol">^a</span>]: <span class="link">这是第一个脚注</span></span><br><span class="line">[<span class="symbol">^1</span>]: <span class="link">这是第二个脚注</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h3><p>前往<a target="_blank" rel="noopener" href="https://dizzygreen.github.io/">官网</a><a href="%E8%BF%99%E6%98%AF%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%84%9A%E6%B3%A8">^a</a>了解更多关于xxx<a href="%E8%BF%99%E6%98%AF%E7%AC%AC%E4%BA%8C%E4%B8%AA%E8%84%9A%E6%B3%A8">^1</a>的内容</p>
+<hr>
+<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><ul>
+<li><p><strong>语法</strong></p>
+<p>在要插入图片的位置输入<code>![]()</code>，在小括号内填入图片链接。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![](<span class="link">https://github.githubassets.com/assets/gh-desktop-7c9388a38509.png</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<p><img src="https://github.githubassets.com/assets/gh-desktop-7c9388a38509.png"></p>
+</li>
+</ul>
+<hr>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><ul>
+<li><p><strong>语法</strong></p>
+<p>用<code>|</code>分隔内容。表头下一行用<code>-</code>分隔，具体如代码所示.</p>
+</li>
+<li><p><strong>对齐</strong></p>
+<p>在表头下方的分隔线左边添加<code>:</code>为左对齐，在右边添加<code>:</code>为右对齐，两边同时添加则为居中。具体如代码所示。</p>
+</li>
+<li><p><strong>代码示例</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">| 姓名 | 年龄 | 性别 |</span><br><span class="line">| :--: | :-- | --: |</span><br><span class="line">| 小明 |  18  |  男  |</span><br><span class="line">| 小红 |  17  |  女  |</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>效果展示</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">姓名</th>
+<th align="left">年龄</th>
+<th align="right">性别</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">小明</td>
+<td align="left">18</td>
+<td align="right">男</td>
+</tr>
+<tr>
+<td align="center">小红</td>
+<td align="left">17</td>
+<td align="right">女</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<hr>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/04/28/Markdown_grammar/">http://example.com/2025/04/28/Markdown_grammar/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/markdown/"># markdown</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
