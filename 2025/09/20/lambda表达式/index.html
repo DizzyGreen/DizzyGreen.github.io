@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>lambda表达式 | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">lambda表达式</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 20, 2025&nbsp;&nbsp;18:42:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/C/">C++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="lamlda表达式"><a href="#lamlda表达式" class="headerlink" title="lamlda表达式"></a>lamlda表达式</h1><hr>
+<h3 id="1-Lambda-表达式的基本结构"><a href="#1-Lambda-表达式的基本结构" class="headerlink" title="1. Lambda 表达式的基本结构"></a>1. Lambda 表达式的基本结构</h3><p>一个完整的 Lambda 表达式语法如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[capture_clause] (parameters) -&gt; return_type </span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// function body</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<ol>
+<li><strong>捕获子句 (Capture clause) <code>[]</code></strong><ul>
+<li>这是 Lambda 表达式的开头，用于指定如何捕获外部变量（即在 Lambda 函数体外定义的变量）。</li>
+<li>它决定了 Lambda 函数体内可以使用哪些外部变量，以及使用的是副本还是引用。</li>
+</ul>
+</li>
+<li><strong>参数列表 (Parameters) <code>()</code></strong><ul>
+<li>和普通函数一样，用于接收传入的参数。</li>
+<li>如果不需要参数，可以省略 <code>()</code>（在 C++23 之前，无参时括号不可省略，但从 C++20&#x2F;23 开始，在某些简单情况下可以省略，为了清晰和兼容性，通常建议保留）。</li>
+</ul>
+</li>
+<li><strong>返回类型 (Return type) <code>-&gt; type</code></strong><ul>
+<li>显式指定 Lambda 表达式的返回类型。</li>
+<li>如果忽略返回类型，lambda根据函数体中的代码推断出返回类型。如果函数体只是一个return语句，则返回类型从返回的表达式的类型推断而来。如果 lambda的函数体包含任何单一return 语句之外的内容，且未指定返回类型，则返回void。</li>
+</ul>
+</li>
+<li><strong>函数体 (Body) <code>&#123;&#125;</code></strong><ul>
+<li>和普通函数一样，包含要执行的代码。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="2-捕获子句-Capture-Clause-的详细用法"><a href="#2-捕获子句-Capture-Clause-的详细用法" class="headerlink" title="2. 捕获子句 (Capture Clause) 的详细用法"></a>2. 捕获子句 (Capture Clause) 的详细用法</h3><ul>
+<li><p><strong><code>[]</code> 不捕获任何外部变量。</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">auto</span> func = []() &#123; <span class="comment">/* std::cout &lt;&lt; x; // 错误！无法访问 x */</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong><code>[=]</code> 以值的方式捕获所有外部变量。</strong></p>
+<ul>
+<li>在 Lambda 体内使用这些变量时，使用的是它们在 Lambda<strong>定义时</strong>的副本。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>, y = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">auto</span> func = [=]() &#123; std::cout &lt;&lt; x + y; &#125;; <span class="comment">// 合法，使用的是 x 和 y 的副本</span></span><br><span class="line"><span class="built_in">func</span>(); <span class="comment">// 输出 30</span></span><br><span class="line">x = <span class="number">100</span>; <span class="comment">// 修改外部 x</span></span><br><span class="line"><span class="built_in">func</span>(); <span class="comment">// 仍然输出 30，因为内部使用的是副本</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong><code>[&amp;]</code> 以引用的方式捕获所有外部变量。</strong></p>
+<ul>
+<li>在 Lambda 体内使用这些变量时，使用的是它们的引用，修改它们会影响外部变量。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">auto</span> func = [&amp;]() &#123; x = <span class="number">20</span>; &#125;; <span class="comment">// 捕获 x 的引用</span></span><br><span class="line"><span class="built_in">func</span>();</span><br><span class="line">std::cout &lt;&lt; x; <span class="comment">// 输出 20，外部 x 被修改了</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong><code>[var]</code> 显式地以值的方式捕获特定变量 <code>var</code>。</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>, y = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">auto</span> func = [x]() &#123; std::cout &lt;&lt; x; <span class="comment">/* std::cout &lt;&lt; y; // 错误！y 未被捕获 */</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong><code>[&amp;var]</code> 显式地以引用的方式捕获特定变量 <code>var</code>。</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">auto</span> func = [&amp;x]() &#123; x = <span class="number">100</span>; &#125;;</span><br><span class="line"><span class="built_in">func</span>();</span><br><span class="line">std::cout &lt;&lt; x; <span class="comment">// 输出 100</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>混合捕获</strong></p>
+<ul>
+<li>可以混合使用值和引用捕获，也可以混合显式和隐式捕获（但隐式捕获 <code>[=]</code> 或 <code>[&amp;]</code> 必须放在前面）。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>, c = <span class="number">3</span>, d = <span class="number">4</span>;</span><br><span class="line"><span class="comment">// 以引用方式捕获所有外部变量，但以值方式捕获 c</span></span><br><span class="line"><span class="keyword">auto</span> f1 = [&amp;, c]() &#123; <span class="comment">/* ... */</span> &#125;;</span><br><span class="line"><span class="comment">// 以值方式捕获所有外部变量，但以引用方式捕获 d</span></span><br><span class="line"><span class="keyword">auto</span> f2 = [=, &amp;d]() &#123; <span class="comment">/* ... */</span> &#125;;</span><br><span class="line"><span class="comment">// 错误：隐式捕获必须放在最前面</span></span><br><span class="line"><span class="comment">// auto f3 = [a, &amp;]() &#123; ... &#125;;</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong><code>[this]</code> 捕获当前的 <code>this</code> 指针</strong></p>
+<ul>
+<li>用于在类的成员函数中定义 Lambda，使其可以访问该类的成员变量和函数。</li>
+<li>本质上是以值的方式捕获了 <code>this</code> 指针，然后通过 <code>this-&gt;member</code> 来访问成员。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> </span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> value = <span class="number">42</span>;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> lambda = [<span class="keyword">this</span>]() </span><br><span class="line">        &#123;</span><br><span class="line">            std::cout &lt;&lt; value; <span class="comment">// 相当于 std::cout &lt;&lt; this-&gt;value;</span></span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="built_in">lambda</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong><code>[*this]</code> (C++17) 以值方式捕获当前对象</strong></p>
+<ul>
+<li>生成当前对象的一个副本，Lambda 内部的操作不会影响原对象。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设在 MyClass 的成员函数中</span></span><br><span class="line"><span class="keyword">auto</span> lambda = [*<span class="keyword">this</span>]() &#123; <span class="comment">/* ... */</span> &#125;; <span class="comment">// 捕获的是 *this 的副本</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="3-Lambda-作为函数参数（与-STL-算法配合）"><a href="#3-Lambda-作为函数参数（与-STL-算法配合）" class="headerlink" title="3. Lambda 作为函数参数（与 STL 算法配合）"></a>3. Lambda 作为函数参数（与 STL 算法配合）</h3><p>这是 Lambda 最常用的场景，使得 STL 算法的调用非常简洁。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; nums = &#123;<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">6</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. 排序：使用 Lambda 自定义比较规则（从大到小）</span></span><br><span class="line">    std::<span class="built_in">sort</span>(nums.<span class="built_in">begin</span>(), nums.<span class="built_in">end</span>(), </span><br><span class="line">              [](<span class="type">int</span> a, <span class="type">int</span> b) &#123;<span class="keyword">return</span> a &gt; b; <span class="comment">// 降序&#125;);</span></span><br><span class="line">    <span class="comment">// nums 现在是 &#123;9, 6, 5, 4, 3, 2, 1, 1&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 计数：统计大于 5 的数字个数</span></span><br><span class="line">    <span class="type">int</span> count = std::<span class="built_in">count_if</span>(nums.<span class="built_in">begin</span>(), nums.<span class="built_in">end</span>(), </span><br><span class="line">                              [](<span class="type">int</span> n) &#123;<span class="keyword">return</span> n &gt; <span class="number">5</span>;&#125;);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Count of numbers &gt; 5: &quot;</span> &lt;&lt; count &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 遍历并修改：将所有偶数乘以 2</span></span><br><span class="line">    std::for_each(nums.<span class="built_in">begin</span>(), nums.<span class="built_in">end</span>(), </span><br><span class="line">                  [](<span class="type">int</span> &amp;n) &#123;<span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">0</span>) n *= <span class="number">2</span>;&#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 打印结果</span></span><br><span class="line">    std::for_each(nums.<span class="built_in">begin</span>(), nums.<span class="built_in">end</span>(), </span><br><span class="line">                  [](<span class="type">int</span> n) &#123;std::cout &lt;&lt; n &lt;&lt; <span class="string">&quot; &quot;</span>;&#125;);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-mutable-关键字"><a href="#4-mutable-关键字" class="headerlink" title="4. mutable 关键字"></a>4. mutable 关键字</h3><p>默认情况下，以值方式 <code>[=]</code> 捕获的变量在 Lambda 体内是 <strong>只读的</strong>（它们被视为 <code>const</code>）。如果需要在 Lambda 内部修改这些副本的值，并且不希望影响外部变量，需要在参数列表后加上 <code>mutable</code> 关键字。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// 错误：没有 mutable，不能修改按值捕获的变量</span></span><br><span class="line"><span class="comment">// auto f = [x]() &#123; x++; &#125;;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 正确：使用 mutable</span></span><br><span class="line"><span class="keyword">auto</span> f = [x]() <span class="keyword">mutable</span> </span><br><span class="line">&#123;</span><br><span class="line">    x++;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;内部 x: &quot;</span> &lt;&lt; x &lt;&lt; std::endl;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">f</span>(); <span class="comment">// 输出 &quot;内部 x: 11&quot;</span></span><br><span class="line"><span class="built_in">f</span>(); <span class="comment">// 输出 &quot;内部 x: 12&quot; (每次调用都会修改其内部的副本)</span></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;外部 x: &quot;</span> &lt;&lt; x &lt;&lt; std::endl; <span class="comment">// 输出 &quot;外部 x: 10&quot; (外部变量未被影响)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：<code>mutable</code> 允许修改的是 Lambda 对象内部存储的<strong>副本</strong>，而不是原始外部变量。</p>
+<hr>
+<h3 id="5-Lambda-的类型"><a href="#5-Lambda-的类型" class="headerlink" title="5.Lambda 的类型"></a>5.Lambda 的类型</h3><p>Lambda 函数的类型是唯一的、未命名的、由编译器自动生成的闭包类型。你没有办法在代码中直接写出它的类型名。每个 Lambda 表达式都会在编译时生成一个全新的、独一无二的类类型。即使两个 Lambda 在代码上看起来完全一样，它们的类型也是不同的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> lambda1 = []()&#123; <span class="keyword">return</span> <span class="number">1</span>; &#125;;</span><br><span class="line"><span class="keyword">auto</span> lambda2 = []()&#123; <span class="keyword">return</span> <span class="number">1</span>; &#125;;</span><br><span class="line"><span class="comment">// lambda2与lambda1代码相同,但是它们的类型是不同的！</span></span><br><span class="line"><span class="built_in">static_assert</span>(!std::is_same_v&lt;<span class="keyword">decltype</span>(lambda1), <span class="keyword">decltype</span>(lambda2)&gt;);</span><br><span class="line"><span class="comment">// 这行代码会通过编译，证明lambda1和lambda2的类型确实不同</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="如何获取和使用-Lambda-的类型？"><a href="#如何获取和使用-Lambda-的类型？" class="headerlink" title="如何获取和使用 Lambda 的类型？"></a>如何获取和使用 Lambda 的类型？</h4><h4 id="方法一：使用-auto"><a href="#方法一：使用-auto" class="headerlink" title="方法一：使用 auto"></a>方法一：使用 <code>auto</code></h4><p>这是定义和存储 Lambda 表达式最直接、最简洁的方式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> myLambda = [](<span class="type">int</span> a, <span class="type">int</span> b) &#123; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line"><span class="type">int</span> result = <span class="built_in">myLambda</span>(<span class="number">2</span>, <span class="number">3</span>); <span class="comment">// result = 5</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="方法二：使用-std-function"><a href="#方法二：使用-std-function" class="headerlink" title="方法二：使用 std::function"></a>方法二：使用 <code>std::function</code></h4><p>这是将 Lambda 作为参数传递或存储起来的最佳方式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 使用 std::function 存储 Lambda</span></span><br><span class="line">std::function&lt;<span class="type">int</span>(<span class="type">int</span>, <span class="type">int</span>)&gt; addFunction = [](<span class="type">int</span> a, <span class="type">int</span> b) &#123; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 将 Lambda 作为函数参数传递</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">executeCallback</span><span class="params">(<span class="type">const</span> std::function&lt;<span class="type">void</span>()&gt;&amp; callback)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">callback</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建一个捕获了变量 x 的 Lambda</span></span><br><span class="line">    <span class="keyword">auto</span> myLambda = [x]() </span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;The value is: &quot;</span> &lt;&lt; x &lt;&lt; std::endl;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将其传递给函数</span></span><br><span class="line">    <span class="built_in">executeCallback</span>(myLambda);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/09/20/lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/">http://example.com/2025/09/20/lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/09/20/stdbind/">std::bind</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
