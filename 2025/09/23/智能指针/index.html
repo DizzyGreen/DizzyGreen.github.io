@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>智能指针 | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">智能指针</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 23, 2025&nbsp;&nbsp;18:42:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/C/">C++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h1><p>为了更容易（同时也更安全）地使用动态内存，新的标准库提供了两种智能指针(smart pointer)类型来管理动态对象。智能指针的行为类似常规指针，重要的区别是它负责自动释放所指向的对象。新标准库提供的这两种智能指针的区别在于管理底层指针的方式<code>shared_ptr</code> 允许多个指针指向同一个对象；<code>unique_ptr</code> 则“独占”所指向的对象。标准库还定义了一个名为<code>weak_ptr</code>的伴随类，它是一种弱引用，指向 <code>shared_ptr</code>所管理的对象。这三种类型都定义在<code>memory</code>头文件中。</p>
+<hr>
+<h2 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h2><p>类似 vector，智能指针也是模板。因此，当我们创建一个智能指针时，必须提供额外的信息——指针可以指向的类型。与vector一样，我们在尖括号内给出类型，之后是所定义的这种智能指针的名字；</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shared_ptr&lt;string&gt;p1;     <span class="comment">//shared_ptr可以指向string</span></span><br><span class="line">shared_ptr&lt;list&lt;<span class="type">int</span>&gt;&gt;p2   <span class="comment">//shared_ptr可以指向int的list</span></span><br></pre></td></tr></table></figure>
+
+<p>智能指针的使用与普通指针相似，解引用一个智能指针返回它指向的对象，如果在条件判断中使用智能指针，效果是检测它是否为空：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(p1 &amp;&amp; p1-&gt;<span class="built_in">empty</span>())</span><br><span class="line">&#123;</span><br><span class="line">    *p1=<span class="string">&quot;hi&quot;</span>;     <span class="comment">//如果p1指向一个空string，解引用p1，将一个新值赋予p1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="shared-ptr和unique-ptr都支持的操作"><a href="#shared-ptr和unique-ptr都支持的操作" class="headerlink" title="shared_ptr和unique_ptr都支持的操作"></a>shared_ptr和unique_ptr都支持的操作</h3><table>
+<thead>
+<tr>
+<th align="left">shared_ptr&lt;T&gt;sp<br/>unique&lt;T&gt;up</th>
+<th>空智能指针，可以指向类型为T的对象</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">p</td>
+<td>将p作为一个条件判断，若p指向一个对象，则返回true</td>
+</tr>
+<tr>
+<td align="left">*P</td>
+<td>解引用p获得它指向的对象</td>
+</tr>
+<tr>
+<td align="left">p-&gt;mem</td>
+<td>等价于(*p).mem</td>
+</tr>
+<tr>
+<td align="left">p.get()</td>
+<td>返回p中保存的指针</td>
+</tr>
+<tr>
+<td align="left">swap(p,q)<br/>p.swap(q)</td>
+<td>交换p和q中的指针</td>
+</tr>
+</tbody></table>
+<h3 id="shared-ptr-独有的操作"><a href="#shared-ptr-独有的操作" class="headerlink" title="shared_ptr 独有的操作"></a>shared_ptr 独有的操作</h3><table>
+<thead>
+<tr>
+<th>make_shared&lt;T&gt;(args)</th>
+<th>返回一个 shared_ptr，指向一个动态分配的类型为T的对象。使用 args 初始化此对象</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>shared_ptr&lt;T&gt;p(q)</td>
+<td>p是shared_ptr q的拷贝；此操作会递增q中的计数器。q中的指针必须能转换为T*</td>
+</tr>
+<tr>
+<td>p &#x3D; q</td>
+<td>p和q都是shared_ptr，所保存的指针必须能相互转换。此操作会递减p的引用计数，递增q的引用计数；若p的引用计数变为0，则将其管理的原内存释放</td>
+</tr>
+<tr>
+<td>p.use_count()</td>
+<td>返回与p共享对象的智能指针数量；<strong>可能很慢，主要用于调试</strong></td>
+</tr>
+<tr>
+<td>p.unique()</td>
+<td>若p.use_count()为1，返回true；否则返回 false</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>由于在最后一个shared_ptr销毁前内存都不会释放，保证 shared_ptr在无用之后不再保留就非常重要了。如果你忘记了销毁程序不再需要的shared_ptr，程序仍会正确执行，但会浪费内存。shared_ptr在无用之后仍然保留的一种可能情况是，你将shared_ptr存放在一个容器中，随后重排了容器，从而不再需要某些元素。在这种情况下，你应该确保用 erase 删除那些不再需要的 shared_ptr 元素。</p>
+</blockquote>
+<hr>
+<h2 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h2><p>一个 unique_ptr“拥有”它所指向的对象。与shared_ptr不同，某个时刻只能有一个unique_ptr指向一个给定对象。当unique_ptr被销毁时，它所指向的对象也被销毁。</p>
+<p>与 shared_ptr 不同，没有类似 make_shared的标准库函数返回一个unique_ptr。当我们定义一个unique_ptr时，需要将其绑定到一个new返回的指针上。类似 shared_ptr，初始化 unique_ptr必须采用直接初始化形式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unique_ptr&lt;<span class="type">double</span>&gt; p1;            <span class="comment">//可以指向一个double的unique_ptr</span></span><br><span class="line"><span class="function">unique_ptr&lt;<span class="type">int</span>&gt; <span class="title">p2</span><span class="params">(<span class="keyword">new</span> <span class="type">int</span> (<span class="number">42</span>))</span>；<span class="comment">//p2指向一个值为42的int</span></span></span><br></pre></td></tr></table></figure>
+
+<p>由于一个unique_ptr拥有它指向的对象，因此unique_ptr不支持普通的拷贝或赋值操作：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">unique_ptr&lt;string&gt; <span class="title">pl</span><span class="params">(<span class="keyword">new</span> string(<span class="string">&quot;hello world&quot;</span>))</span></span>;</span><br><span class="line"><span class="function">unique_ptr&lt;string&gt; <span class="title">p2</span><span class="params">(p1)</span></span>;      <span class="comment">//错误：unique ptr不支持拷贝</span></span><br><span class="line">unique_ptr&lt;string&gt; p3;</span><br><span class="line">p3= p2；                         <span class="comment">//错误：unique ptr不支持赋值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="unique-ptr-的操作"><a href="#unique-ptr-的操作" class="headerlink" title="unique_ptr 的操作"></a>unique_ptr 的操作</h3><table>
+<thead>
+<tr>
+<th>unique_ptr&lt;T&gt; u1 unique_ptr&lt;T,D&gt; u2</th>
+<th>空unique_ptr, 可以指向类型为T的对象。u1会使用delete来释放它的指针；u2会使用一个类型为D的可调用对象来释放它的指针</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>unique_ptr&lt;T, D&gt; u(d)</td>
+<td>空unique_ptr，指向类型为T的对象，用类型为D的对象d代替 delete</td>
+</tr>
+<tr>
+<td>u &#x3D; nullptr</td>
+<td>释放u指向的对象，将u置为空</td>
+</tr>
+<tr>
+<td>u.release()</td>
+<td>u放弃对指针的控制权，返回指针，并将u置为空</td>
+</tr>
+<tr>
+<td>u.reset()</td>
+<td>释放u指向的对象</td>
+</tr>
+<tr>
+<td>u.reset (q)<br/>u.reset (nullptr)</td>
+<td>如果提供了内置指针q，令u指向这个对象；否则将u置为空</td>
+</tr>
+</tbody></table>
+<h3 id="传递-unique-ptr参数和返回-unique-ptr"><a href="#传递-unique-ptr参数和返回-unique-ptr" class="headerlink" title="传递 unique_ptr参数和返回 unique_ptr"></a>传递 unique_ptr参数和返回 unique_ptr</h3><p>不能拷贝 unique_ptr的规则有一个例外：我们可以拷贝或赋值一个将要被销毁的unique_ptr。最常见的例子是从函数返回一个unique_ptr:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">unique_ptr&lt;<span class="type">int</span>&gt; <span class="title">clone</span><span class="params">(<span class="type">int</span> p)</span>     <span class="comment">//正确：从 int*创建一个unique_ptr&lt;int&gt;</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">unique_ptr</span>&lt;<span class="type">int</span>&gt;(<span class="keyword">new</span> <span class="built_in">int</span> (p));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还可以返回一个局部对象的拷贝：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">unigue_ptr&lt;<span class="type">int</span>&gt; <span class="title">clone</span><span class="params">(<span class="type">int</span> p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">unique_ptr&lt;<span class="type">int</span>&gt; <span class="title">ret</span><span class="params">(<span class="keyword">new</span> <span class="type">int</span> (p))</span></span>;</span><br><span class="line">    <span class="comment">// 。。。</span></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注： 函数返回的unique_ptr本质上是移动语义而不是拷贝</strong></p>
+<hr>
+<h2 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h2><p>weak_ptr 是一种不控制所指向对象生存期的智能指针，它指向由一个shared_ptr 管理的对象。将一个 weak_ptr 绑定到一个 shared_ptr 不会改变shared_ptr的引用计数。一旦最后一个指向对象的shared_ptr.被销毁，对象就会被释放。即使有 weak_ptr 指向对象，对象也还是会被释放，因此，weak_ptr的名字抓住了这种智能指针“弱”共享对象的特点。</p>
+<h3 id="weak-ptr-1"><a href="#weak-ptr-1" class="headerlink" title="weak_ptr"></a>weak_ptr</h3><table>
+<thead>
+<tr>
+<th>weak_ptr&lt;T&gt;w</th>
+<th>空weak_ptr可以指向类型为T的对象</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>weak_ptr&lt;T&gt; w(sp)</td>
+<td>与shared_ptr sp指向相同对象的weak_ptr。T必须能转换为sp指向的类型</td>
+</tr>
+<tr>
+<td>w &#x3D; p</td>
+<td>p可以是一个shared_ptr或一个weak_ptr.赋值后w与p共享对象</td>
+</tr>
+<tr>
+<td>w.reset ()</td>
+<td>將w置为空</td>
+</tr>
+<tr>
+<td>w.use count()</td>
+<td>与w共享对象的shared_ptr的数量</td>
+</tr>
+<tr>
+<td>w.expired()</td>
+<td>若w.use_count()为0，返回true，否则返回 false</td>
+</tr>
+<tr>
+<td>w.lock()</td>
+<td>如果expired为true, 返回一个空 shared_ptr;否则返回一个指向w的对象的shared_ptr</td>
+</tr>
+</tbody></table>
+<p>当我们创建一个weak_ptr时，要用一个 shared_ptr来初始化它：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = <span class="built_in">make_shared</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>)；</span><br><span class="line">weak_ptr&lt;<span class="type">int</span>&gt; <span class="built_in">wp</span>(p)；     <span class="comment">//wp弱共享p；p的引用计数未改变</span></span><br></pre></td></tr></table></figure>
+
+<p>由于对象可能不存在，我们不能使用weak_ptr直接访问对象，而必须调用lock。此函数检查weak_ptr指向的对象是否仍存在。如果存在，lock返回一个指向共享对象的shared_ptr。与任何其他shared_ptr类似，只要此shared_ptr存在，它所指向的底层对象也就会一直存在。</p>
+<hr>
+<h2 id="智能指针陷阱"><a href="#智能指针陷阱" class="headerlink" title="智能指针陷阱"></a>智能指针陷阱</h2><p>智能指针可以提供对动态分配的内存安全而又方便的管理，但这建立在正确使用的前提下。为了正确使用智能指针，我们必须坚持一些基本规范：</p>
+<ul>
+<li>不使用相同的内置指针值初始化（或 reset)多个智能指针。</li>
+<li>不 delete get ()返回的指针。</li>
+<li>不使用 get()初始化或 reset.另一个智能指针。</li>
+<li>如果你使用get()返回的指针，记住当最后一个对应的智能指针销毁后，你的指针就变为无效了</li>
+<li>如果你使用智能指针管理的资源不是new分配的内存，记住传递给它一个删除器</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/09/23/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">http://example.com/2025/09/23/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/09/21/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/">右值引用</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
