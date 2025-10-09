@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>C++类型转换操作符 | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">C++类型转换操作符</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 25, 2025&nbsp;&nbsp;18:42:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/C/">C++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="C-类型转换操作符"><a href="#C-类型转换操作符" class="headerlink" title="C++类型转换操作符"></a>C++类型转换操作符</h1><p>在C++中，类型转换有四种主要的操作符：<code>const_cast</code>、<code>static_cast</code>、<code>dynamic_cast</code> 和 <code>reinterpret_cast</code></p>
+<hr>
+<h2 id="1-const-cast"><a href="#1-const-cast" class="headerlink" title="1. const_cast"></a>1. const_cast</h2><p><strong>用途</strong>：主要用于添加或移除 <code>const</code> 和 <code>volatile</code> 限定符</p>
+<h3 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">const_cast</span>&lt;new_type&gt;(expression)</span><br></pre></td></tr></table></figure>
+
+<p>其他三个操作符语法也一样</p>
+<h3 id="用途："><a href="#用途：" class="headerlink" title="用途："></a>用途：</h3><p>主要用于添加或移除 <code>const</code>、<code>volatile</code> 属性</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/ 移除 <span class="type">const</span> 限定符</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// int* ptr = &amp;x;  // 错误：不能将 const int* 转换为 int*</span></span><br><span class="line"><span class="type">int</span>* ptr = <span class="built_in">const_cast</span>&lt;<span class="type">int</span>*&gt;(&amp;x);  <span class="comment">// 正确</span></span><br><span class="line">*ptr = <span class="number">20</span>;  <span class="comment">// 未定义行为！x 原本是 const</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加 const 限定符</span></span><br><span class="line"><span class="type">int</span> y = <span class="number">30</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span>* cptr = <span class="built_in">const_cast</span>&lt;<span class="type">const</span> <span class="type">int</span>*&gt;(&amp;y);  <span class="comment">// 安全</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>警告</strong>：修改原本声明为 const 的对象会导致未定义行为。</p>
+<hr>
+<h2 id="2-static-cast"><a href="#2-static-cast" class="headerlink" title="2. static_cast"></a>2. static_cast</h2><p><code>static_cast</code>用于在<strong>有继承关系</strong>或<strong>已知可转换</strong>的类型之间转换</p>
+<p><strong>用途</strong>：</p>
+<ul>
+<li><p>基本数据类型之间的转换</p>
+</li>
+<li><p>类层次结构中的向上转换（安全）</p>
+</li>
+<li><p>向下转换（不安全，但比 C 风格转换安全）</p>
+</li>
+<li><p>空指针转换</p>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基本类型转换</span></span><br><span class="line"><span class="type">double</span> d = <span class="number">3.14</span>;</span><br><span class="line"><span class="type">int</span> i = <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(d);  <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 类层次中的向上转换（安全）</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span> &#123;&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derived</span> : <span class="keyword">public</span> Base &#123;&#125;;</span><br><span class="line">Derived derived;</span><br><span class="line">Base* basePtr = <span class="built_in">static_cast</span>&lt;Base*&gt;(&amp;derived);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 向下转换（不安全，编译时不会检查）</span></span><br><span class="line">Base base;</span><br><span class="line">Derived* derivedPtr = <span class="built_in">static_cast</span>&lt;Derived*&gt;(&amp;base);  <span class="comment">// 危险！</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void* 转换</span></span><br><span class="line"><span class="type">int</span> value = <span class="number">42</span>;</span><br><span class="line"><span class="type">void</span>* voidPtr = <span class="built_in">static_cast</span>&lt;<span class="type">void</span>*&gt;(&amp;value);</span><br><span class="line"><span class="type">int</span>* intPtr = <span class="built_in">static_cast</span>&lt;<span class="type">int</span>*&gt;(voidPtr);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-dynamic-cast"><a href="#3-dynamic-cast" class="headerlink" title="3. dynamic_cast"></a>3. dynamic_cast</h2><p>用于多态类型的运行时类型检查和转换</p>
+<p><strong>用途</strong>：</p>
+<ul>
+<li><p>主要用于类层次结构中的安全向下转换</p>
+</li>
+<li><p>运行时类型检查</p>
+</li>
+<li><p>需要虚函数表支持（必须有虚函数）</p>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span> </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~<span class="built_in">Base</span>() &#123;&#125;  <span class="comment">// 必须有虚函数</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derived</span> : <span class="keyword">public</span> Base </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">derivedMethod</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Base* basePtr = <span class="keyword">new</span> <span class="built_in">Derived</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 安全的向下转换</span></span><br><span class="line">Derived* derivedPtr = <span class="built_in">dynamic_cast</span>&lt;Derived*&gt;(basePtr);</span><br><span class="line"><span class="keyword">if</span> (derivedPtr) </span><br><span class="line">&#123;  <span class="comment">// 检查是否转换成功</span></span><br><span class="line">    derivedPtr-&gt;<span class="built_in">derivedMethod</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 引用转换（失败会抛出异常）</span></span><br><span class="line"><span class="keyword">try</span> </span><br><span class="line">&#123;</span><br><span class="line">    Derived&amp; derivedRef = <span class="built_in">dynamic_cast</span>&lt;Derived&amp;&gt;(*basePtr);</span><br><span class="line">&#125; <span class="built_in">catch</span> (<span class="type">const</span> std::bad_cast&amp; e) </span><br><span class="line">&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;转换失败: &quot;</span> &lt;&lt; e.<span class="built_in">what</span>() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">delete</span> basePtr;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-reinterpret-cast"><a href="#4-reinterpret-cast" class="headerlink" title="4. reinterpret_cast"></a>4. reinterpret_cast</h2><p>低级别的重新解释位模式，最危险的转换</p>
+<p>用于<strong>任意指针类型</strong>之间的重新解释，不进行类型检查</p>
+<p><strong>用途</strong>：</p>
+<ul>
+<li>低级别的类型重新解释</li>
+<li>指针类型之间的转换</li>
+<li>整数和指针之间的转换</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指针类型之间的转换</span></span><br><span class="line"><span class="type">int</span> x = <span class="number">65</span>;</span><br><span class="line"><span class="type">char</span>* charPtr = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">char</span>*&gt;(&amp;x);</span><br><span class="line">cout &lt;&lt; *charPtr;  <span class="comment">// 可能输出 &#x27;A&#x27;（取决于字节序）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 指针和整数之间的转换</span></span><br><span class="line"><span class="type">int</span>* ptr = &amp;x;</span><br><span class="line"><span class="type">uintptr_t</span> intValue = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">uintptr_t</span>&gt;(ptr);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不相关类型指针的转换</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123; <span class="type">int</span> a; &#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> &#123; <span class="type">double</span> b; &#125;;</span><br><span class="line">A aObj;</span><br><span class="line">B* bPtr = <span class="built_in">reinterpret_cast</span>&lt;B*&gt;(&amp;aObj);  <span class="comment">// 极其危险！</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>警告</strong>：<code>reinterpret_cast</code> 不进行任何类型检查，容易导致未定义行为</p>
+<hr>
+<h2 id="总结对比"><a href="#总结对比" class="headerlink" title="总结对比"></a>总结对比</h2><table>
+<thead>
+<tr>
+<th align="left">转换类型</th>
+<th align="left">检查时机</th>
+<th align="left">安全性</th>
+<th align="left">主要用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static_cast</code></td>
+<td align="left">编译时</td>
+<td align="left">中等</td>
+<td align="left">相关类型间的转换</td>
+</tr>
+<tr>
+<td align="left"><code>dynamic_cast</code></td>
+<td align="left">运行时</td>
+<td align="left">高</td>
+<td align="left">多态类型的安全转换</td>
+</tr>
+<tr>
+<td align="left"><code>const_cast</code></td>
+<td align="left">编译时</td>
+<td align="left">低</td>
+<td align="left">修改 const&#x2F;volatile</td>
+</tr>
+<tr>
+<td align="left"><code>reinterpret_cast</code></td>
+<td align="left">编译时</td>
+<td align="left">极低</td>
+<td align="left">底层位模式重新解释</td>
+</tr>
+<tr>
+<td align="left">C风格转换</td>
+<td align="left">编译时</td>
+<td align="left">极低</td>
+<td align="left">不推荐使用</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><ol>
+<li><strong>优先使用 C++ 风格转换</strong>，它们更安全且意图更明确</li>
+<li><strong>避免使用 <code>reinterpret_cast</code></strong>，除非确实需要底层操作</li>
+<li><strong>谨慎使用 <code>const_cast</code></strong>，修改 const 对象是危险的</li>
+<li><strong>使用 <code>dynamic_cast</code> 进行多态类型的向下转换</strong></li>
+<li><strong>对于数值转换，考虑使用 <code>static_cast</code></strong></li>
+</ol>
+<p>选择正确的转换操作符可以帮助编译器捕获错误，并使代码的意图更加清晰。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/09/25/C++%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%93%8D%E4%BD%9C%E7%AC%A6/">http://example.com/2025/09/25/C++%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%93%8D%E4%BD%9C%E7%AC%A6/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2025/10/09/%E6%9D%A1%E6%AC%BE6%E7%9A%84%E6%91%98%E8%A6%81%E4%B8%8E%E8%A1%A5%E5%85%85/">条款6的摘要与补充</a>
+            
+            
+            <a class="next" rel="next" href="/2025/09/23/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">智能指针</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
