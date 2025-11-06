@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>基于智能指针的队列模板链表实现 | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">基于智能指针的队列模板链表实现</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 4, 2025&nbsp;&nbsp;18:42:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="基于智能指针的队列模板链表实现"><a href="#基于智能指针的队列模板链表实现" class="headerlink" title="基于智能指针的队列模板链表实现"></a>基于智能指针的队列模板链表实现</h1><h2 id="一、私有成员"><a href="#一、私有成员" class="headerlink" title="一、私有成员"></a>一、私有成员</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">Node</span> <span class="comment">// 节点</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">Node</span>(T n) : <span class="built_in">next</span>(<span class="literal">nullptr</span>), <span class="built_in">val</span>(n) &#123;&#125;</span><br><span class="line">		std::unique_ptr&lt;Node&gt; next;</span><br><span class="line">		T val;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	std::unique_ptr&lt;Node&gt; head; <span class="comment">// 链表头指针</span></span><br><span class="line">	Node* tail; <span class="comment">// 使用原始指针作为尾指针，但不拥有所有权</span></span><br><span class="line">	<span class="type">int</span> m_size; <span class="comment">// 队列大小</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="二、构造函数和析构函数"><a href="#二、构造函数和析构函数" class="headerlink" title="二、构造函数和析构函数"></a>二、构造函数和析构函数</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Queue</span>() : <span class="built_in">head</span>(<span class="literal">nullptr</span>), <span class="built_in">tail</span>(<span class="literal">nullptr</span>), <span class="built_in">m_size</span>(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"><span class="comment">// 智能指针自动管理内存，无需手动释放</span></span><br><span class="line">~<span class="built_in">Queue</span>() = <span class="keyword">default</span>; </span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、push和pop操作"><a href="#三、push和pop操作" class="headerlink" title="三、push和pop操作"></a>三、push和pop操作</h2><h3 id="1-push"><a href="#1-push" class="headerlink" title="1.push"></a>1.push</h3><p>当队列为空时（即<code>tail</code>指针为空时），我们让<code>head</code>指针和<code>tail</code>指针同时指向<code>newNode</code></p>
+<p>否则，我们使用链表尾插插入新节点</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T n)</span>  <span class="comment">// 入队</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::unique_ptr&lt;Node&gt; newNode = std::<span class="built_in">make_unique</span>&lt;Node&gt;(n);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (tail == <span class="literal">nullptr</span>)  <span class="comment">// 队列为空</span></span><br><span class="line">	&#123;</span><br><span class="line">		head = std::<span class="built_in">move</span>(newNode);</span><br><span class="line">		tail = head.<span class="built_in">get</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>                 <span class="comment">// 队列不为空</span></span><br><span class="line">	&#123;</span><br><span class="line">		tail-&gt;next = std::<span class="built_in">move</span>(newNode);</span><br><span class="line">		tail = tail-&gt;next.<span class="built_in">get</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	m_size += <span class="number">1</span>;   <span class="comment">// 更新大小</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-pop"><a href="#2-pop" class="headerlink" title="2.pop"></a>2.pop</h3><p>当队列不为空时删除链表第一个元素，否则，什么也不做</p>
+<p>如果出队后队列为空，记得更新<code>tail</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">pop</span><span class="params">()</span>  <span class="comment">// 出队</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">empty</span>())</span><br><span class="line">	&#123;</span><br><span class="line">		head = std::<span class="built_in">move</span>(head-&gt;next);</span><br><span class="line">		m_size -= <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">if</span> (head == <span class="literal">nullptr</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			tail = <span class="literal">nullptr</span>;  <span class="comment">//队列为空记得更新tail</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、其他操作"><a href="#四、其他操作" class="headerlink" title="四、其他操作"></a>四、其他操作</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">T <span class="title">front</span><span class="params">()</span>  <span class="comment">// 获取队首</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> head-&gt;val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">T <span class="title">back</span><span class="params">()</span>   <span class="comment">// 获取队尾</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> tail-&gt;val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="comment">// 判断是否为空</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> m_size == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">size</span><span class="params">()</span>  <span class="comment">// 返回元素个数</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> m_size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/11/04/%E5%9F%BA%E4%BA%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%9A%84%E9%98%9F%E5%88%97%E6%A8%A1%E6%9D%BF%E9%93%BE%E8%A1%A8%E5%AE%9E%E7%8E%B0/">http://example.com/2025/11/04/%E5%9F%BA%E4%BA%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%9A%84%E9%98%9F%E5%88%97%E6%A8%A1%E6%9D%BF%E9%93%BE%E8%A1%A8%E5%AE%9E%E7%8E%B0/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"># 数据结构</a>
+                    
+                        <a href="/tags/STL/"># STL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2025/11/04/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%89%A9%E5%B1%95%E5%85%88%E5%BA%8F%E5%BA%8F%E5%88%97%E5%92%8C%E5%8F%B6%E5%AD%90%E8%B7%AF%E5%BE%84%E6%89%93%E5%8D%B0/">二叉树的扩展先序序列和叶子路径打印</a>
+            
+            
+            <a class="next" rel="next" href="/2025/10/28/C++11%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BA%BF%E7%A8%8B%E6%B1%A0/">C++11实现自定义线程池</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
