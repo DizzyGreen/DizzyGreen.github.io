@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>排序合集 | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">排序合集</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">December 14, 2025&nbsp;&nbsp;18:42:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="排序合集"><a href="#排序合集" class="headerlink" title="排序合集"></a>排序合集</h1><p><strong>测试用数据：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="type">int</span>&gt; v = &#123; <span class="number">6</span>,<span class="number">4</span>,<span class="number">8</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">7</span>,<span class="number">2</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="一、冒泡排序"><a href="#一、冒泡排序" class="headerlink" title="一、冒泡排序"></a>一、冒泡排序</h2><p>按顺序将每两个相邻元素之间作比较，如果逆序则交换</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">BubbleSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; v.<span class="built_in">size</span>(); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">bool</span> swapped = <span class="literal">false</span>; <span class="comment">// 标志位</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; v.<span class="built_in">size</span>() - <span class="number">1</span> - i; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (v[j] &gt; v[j + <span class="number">1</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">swap</span>(v[j], v[j + <span class="number">1</span>]);</span><br><span class="line">				swapped = <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (!swapped) <span class="comment">// 本轮无交换，序列已有序</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序过程"><a href="#排序过程" class="headerlink" title="排序过程"></a>排序过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">6 4 8 5 2 0 3 1 7 2</span><br><span class="line">4 6 5 2 0 3 1 7 2 8</span><br><span class="line">4 5 2 0 3 1 6 2 7 8</span><br><span class="line">4 2 0 3 1 5 2 6 7 8</span><br><span class="line">2 0 3 1 4 2 5 6 7 8</span><br><span class="line">0 2 1 3 2 4 5 6 7 8</span><br><span class="line">0 1 2 2 3 4 5 6 7 8</span><br><span class="line">0 1 2 2 3 4 5 6 7 8</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度O(n²)</p>
+<p>空间复杂度O(1)</p>
+<hr>
+<h2 id="二、插入排序"><a href="#二、插入排序" class="headerlink" title="二、插入排序"></a>二、插入排序</h2><p>在当前索引位置左侧查找当前元素的插入位置</p>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">InsertionSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; v.<span class="built_in">size</span>(); i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="type">int</span> j;</span><br><span class="line">		<span class="type">int</span> tmp = v[i]; <span class="comment">// 提前存储要插入的数据，减少赋值次数</span></span><br><span class="line">		<span class="keyword">for</span> (j = i; j &gt; <span class="number">0</span> &amp;&amp; v[j - <span class="number">1</span>] &gt; tmp; j--)</span><br><span class="line">		&#123;</span><br><span class="line">			v[j] = v[j - <span class="number">1</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		v[j] = tmp;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序过程-1"><a href="#排序过程-1" class="headerlink" title="排序过程"></a>排序过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">6 4 8 5 2 0 3 1 7 2</span><br><span class="line">4 6 8 5 2 0 3 1 7 2</span><br><span class="line">4 6 8 5 2 0 3 1 7 2</span><br><span class="line">4 5 6 8 2 0 3 1 7 2</span><br><span class="line">2 4 5 6 8 0 3 1 7 2</span><br><span class="line">0 2 4 5 6 8 3 1 7 2</span><br><span class="line">0 2 3 4 5 6 8 1 7 2</span><br><span class="line">0 1 2 3 4 5 6 8 7 2</span><br><span class="line">0 1 2 3 4 5 6 7 8 2</span><br><span class="line">0 1 2 2 3 4 5 6 7 8</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度O(n²)</p>
+<p>空间复杂度O(1)</p>
+<h2 id="折半插入排序"><a href="#折半插入排序" class="headerlink" title="折半插入排序"></a>折半插入排序</h2><p>其实就是将查找插入位置的过程改为<strong>二分查找</strong>，因为当前索引位置左侧必然有序</p>
+<p>时间复杂度依然是O(n²)，但比较次数从O(n²)降低到O(n log n)</p>
+<h3 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">binaryInsertionSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// 先将第一个元素视为已排序</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; v.<span class="built_in">size</span>(); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">int</span> tmp = v[i];</span><br><span class="line">		<span class="keyword">if</span> (tmp &gt;= v[i - <span class="number">1</span>])</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="type">int</span> left = <span class="number">0</span>;</span><br><span class="line">		<span class="type">int</span> right = i - <span class="number">1</span>;</span><br><span class="line">		<span class="comment">// 二分查找</span></span><br><span class="line">		<span class="keyword">while</span> (left &lt;= right)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="type">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">			v[mid] &gt; tmp ? right = mid - <span class="number">1</span> : left = mid + <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 此时left就是插入位置</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = i; j &gt; left; j--)</span><br><span class="line">		&#123;</span><br><span class="line">			v[j] = v[j - <span class="number">1</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		v[left] = tmp;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、希尔排序"><a href="#三、希尔排序" class="headerlink" title="三、希尔排序"></a>三、希尔排序</h2><blockquote>
+<p>希尔排序使用一个序列h1，h2,…,ht，叫作增量序列(increment sequence)。只要h1&#x3D;1，任何增量序列都是可行的，不过，有些增量序列比另外一些增量序列更好。在使用增量hk，的一趟排序之后，对于每一个i我们有A[i]&lt;&#x3D;A[i+hk]，所有相隔hk的元素都被排序。此时称文件是s一排序的(h-sorted)。</p>
+</blockquote>
+<p>简单来说就是先保证每个间隔为hk的子序列有序，之后再保证每个间隔为h(k-1)的子序列有序</p>
+<p>希尔提出的增量序列为（<strong>效果不好</strong>）：ht&#x3D;[N&#x2F;2]，hk&#x3D;[h(t+1)&#x2F;2]</p>
+<p>例如：8，4，2，1</p>
+<h2 id="代码实现（希尔增量）"><a href="#代码实现（希尔增量）" class="headerlink" title="代码实现（希尔增量）"></a>代码实现（希尔增量）</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">ShellSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> N = v.<span class="built_in">size</span>();</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> Increment = N / <span class="number">2</span>; Increment &gt; <span class="number">0</span>; Increment /= <span class="number">2</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = Increment; i &lt; N; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="type">int</span> tmp = v[i]; <span class="comment">// 同插入排序</span></span><br><span class="line">			<span class="type">int</span> j;</span><br><span class="line">			<span class="keyword">for</span> (j = i; j &gt;= Increment; j -= Increment)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span> (tmp &lt; v[j - Increment])</span><br><span class="line">				&#123;</span><br><span class="line">					v[j] = v[j - Increment];</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			v[j] = tmp;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序过程-2"><a href="#排序过程-2" class="headerlink" title="排序过程"></a>排序过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">6 4 8 5 2 0 3 1 7 2</span><br><span class="line">0 3 1 5 2 6 4 8 7 2</span><br><span class="line">0 2 1 3 2 5 4 6 7 8</span><br><span class="line">0 1 2 2 3 4 5 6 7 8</span><br></pre></td></tr></table></figure>
+
+<p>最坏情况时间复杂度O(n²)</p>
+<h3 id="其他增量序列"><a href="#其他增量序列" class="headerlink" title="其他增量序列"></a>其他增量序列</h3><p>1.Hibbard序列：1，3，7，15，31，…（公式：2^k-1）  时间复杂度O(n^(3&#x2F;2))</p>
+<p>2.Knuth序列：1，4，13，40，…（公式：h&#x3D;3*h+1）      时间复杂度O(n^(3&#x2F;2))</p>
+<p>3.sedgewick序列：1，5， 19，41，109，209，…</p>
+<p>这个序列由两个子序列交错组成：</p>
+<ul>
+<li>9 * 4 ^ i - 9 * 2 ^ i + 1</li>
+<li>4 ^ i - 3 * 2 ^ i + 1</li>
+</ul>
+<p>时间复杂度O(n^(4&#x2F;3))</p>
+<hr>
+<h2 id="四、选择排序"><a href="#四、选择排序" class="headerlink" title="四、选择排序"></a>四、选择排序</h2><p>每次从未排序的部分选择最小（或最大）元素，放到已排序部分的末尾</p>
+<h3 id="代码实现-3"><a href="#代码实现-3" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">SelectionSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; v.<span class="built_in">size</span>() - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="type">int</span> minIndex = i;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 寻找更小值</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; v.<span class="built_in">size</span>(); j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (v[j] &lt; v[minIndex]) &#123;</span><br><span class="line">                minIndex = j;  <span class="comment">// 更新最小值的索引</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将最小值交换到当前位置i</span></span><br><span class="line">        <span class="keyword">if</span> (minIndex != i) &#123;</span><br><span class="line">            <span class="built_in">swap</span>(v[i], v[minIndex]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序过程-3"><a href="#排序过程-3" class="headerlink" title="排序过程"></a>排序过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">6 4 8 5 2 0 3 1 7 2</span><br><span class="line">0 4 8 5 2 6 3 1 7 2</span><br><span class="line">0 1 8 5 2 6 3 4 7 2</span><br><span class="line">0 1 2 5 8 6 3 4 7 2</span><br><span class="line">0 1 2 2 8 6 3 4 7 5</span><br><span class="line">0 1 2 2 3 6 8 4 7 5</span><br><span class="line">0 1 2 2 3 4 8 6 7 5</span><br><span class="line">0 1 2 2 3 4 5 6 7 8</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度O(n²)</p>
+<h2 id="树形选择排序"><a href="#树形选择排序" class="headerlink" title="树形选择排序"></a>树形选择排序</h2><p>树形选择排序，也称为锦标赛排序，是一种改进的选择排序算法。它通过构建<strong>胜者树</strong>或<strong>败者树</strong>来减少比较次数，从而提高选择最小（或最大）元素的效率</p>
+<h3 id="胜者树（Winner-Tree）"><a href="#胜者树（Winner-Tree）" class="headerlink" title="胜者树（Winner Tree）"></a>胜者树（Winner Tree）</h3><ul>
+<li>一种完全二叉树</li>
+<li>叶节点存储待排序元素</li>
+<li>非叶节点存储子节点中的优胜者（最小值或最大值）</li>
+<li>根节点总是当前最小&#x2F;最大值</li>
+</ul>
+<p>每次取出树的根节点进行选择排序并将根节点替换为无穷大，然后重新调整二叉树</p>
+<hr>
+<h2 id="五、归并排序"><a href="#五、归并排序" class="headerlink" title="五、归并排序"></a>五、归并排序</h2><p>利用<strong>分治思想</strong>进行排序的算法，具体步骤为：</p>
+<ul>
+<li><p>将数组递归地分成两半，直到每个子数组只有一个元素</p>
+</li>
+<li><p>递归地对子数组进行排序</p>
+</li>
+<li><p>将已排序的子数组合并成一个完整的有序数组</p>
+<blockquote>
+<p>基本的合并算法是取两个输入数组A和B，一个输出数组C，以及三个计数器Aptr、Bptr、Cptr，它们初始置于对应数组的开始端。A[Aptr]和 B[Bptr]中的较小者被拷贝到C中的下一个位置，相关的计数器向前推进一步。当两个输入表有一个用完的时候，则将另一个表中的剩余部分拷贝到C中。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="代码实现-4"><a href="#代码实现-4" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 合并</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">merge</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v, <span class="type">int</span> left, <span class="type">int</span> mid, <span class="type">int</span> right)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> n1 = mid - left + <span class="number">1</span>;    <span class="comment">// 左半部分大小</span></span><br><span class="line">    <span class="type">int</span> n2 = right - mid;       <span class="comment">// 右半部分大小</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 临时数组</span></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">L</span><span class="params">(n1)</span>, <span class="title">R</span><span class="params">(n2)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 复制数据到临时数组</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n1; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        L[i] = v[left + i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; n2; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        R[j] = v[mid + <span class="number">1</span> + j];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 合并临时数组</span></span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>, k = left;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (i &lt; n1 &amp;&amp; j &lt; n2) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (L[i] &lt;= R[j]) </span><br><span class="line">        &#123;</span><br><span class="line">            v[k] = L[i];</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> </span><br><span class="line">        &#123;</span><br><span class="line">            v[k] = R[j];</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line">        k++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 复制剩余元素</span></span><br><span class="line">    <span class="keyword">while</span> (i &lt; n1) </span><br><span class="line">    &#123;</span><br><span class="line">        v[k] = L[i];</span><br><span class="line">        i++;</span><br><span class="line">        k++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (j &lt; n2) </span><br><span class="line">    &#123;</span><br><span class="line">        v[k] = R[j];</span><br><span class="line">        j++;</span><br><span class="line">        k++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">mergeSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (left &lt; right) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 递归排序左右两半</span></span><br><span class="line">        <span class="built_in">mergeSort</span>(v, left, mid);</span><br><span class="line">        <span class="built_in">mergeSort</span>(v, mid + <span class="number">1</span>, right);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 合并已排序的部分</span></span><br><span class="line">        <span class="built_in">merge</span>(v, left, mid, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度O(n log n)</p>
+<hr>
+<h2 id="六、快速排序"><a href="#六、快速排序" class="headerlink" title="六、快速排序"></a>六、快速排序</h2><p>也是<strong>分治思想</strong></p>
+<p>取数组S中一个元素v，称之为<strong>枢纽元</strong></p>
+<p>将S中所有比v小的元素和所有比v大的元素分别装到两个集合中</p>
+<p>递归以上步骤</p>
+<h3 id="枢纽元选择"><a href="#枢纽元选择" class="headerlink" title="枢纽元选择"></a>枢纽元选择</h3><h4 id="三分中值分割法"><a href="#三分中值分割法" class="headerlink" title="三分中值分割法"></a>三分中值分割法</h4><p>选择数组S中的<strong>第一个元素、最后一个元素、中心元素</strong>中的中值作为枢纽元</p>
+<p>具体操作为将这三个数排序，这样mid为枢纽元，left必然比枢纽元小，right必然比枢纽元大，随后交换S[mid]和S[right-1]，对mid~right-2范围的数据进行排序</p>
+<h3 id="分割策略"><a href="#分割策略" class="headerlink" title="分割策略"></a>分割策略</h3><p>初始i指向left，j指向right-1，当i&lt;j时，每次让i前进一位，j后退一位，如果S[i]&gt;&#x3D;枢纽元或S[j]&lt;&#x3D;枢纽元则交换S[i]和S[j]，当i和j交错时，将枢纽元与S[i]交换</p>
+<p>此时P&lt;i的位置全都是小元素，P&gt;i的位置全都是大元素</p>
+<h3 id="小数组"><a href="#小数组" class="headerlink" title="小数组"></a>小数组</h3><p>对于小数组（N&lt;&#x3D;20）快速排序效率不如插入排序，建议在5到20之间选择一个截至范围，示例选择5</p>
+<h2 id="代码实现-5"><a href="#代码实现-5" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 三分中值分割</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Median3</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v, <span class="type">int</span> left, <span class="type">int</span> right)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (v[left] &gt; v[mid])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">swap</span>(v[left], v[mid]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (v[left] &gt; v[right])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">swap</span>(v[left], v[right]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (v[mid] &gt; v[right])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">swap</span>(v[mid], v[right]);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">swap</span>(v[mid], v[right - <span class="number">1</span>]);</span><br><span class="line">	<span class="keyword">return</span> v[right - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">QuickSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i, j;</span><br><span class="line">	<span class="type">int</span> pivot;<span class="comment">// 枢纽元</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (left + <span class="number">3</span> &lt;= right)</span><br><span class="line">	&#123;</span><br><span class="line">		pivot = <span class="built_in">Median3</span>(v, left, right);</span><br><span class="line">		i = left, j = right - <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">		&#123;</span><br><span class="line">            <span class="comment">// 在Median3操作后left必然小于pivot，</span></span><br><span class="line">            <span class="comment">// right必然大于pivot，不用担心数组越界</span></span><br><span class="line">			<span class="keyword">while</span> (v[++i] &lt; pivot) &#123;&#125;</span><br><span class="line">			<span class="keyword">while</span> (v[--j] &gt; pivot) &#123;&#125;</span><br><span class="line">			<span class="keyword">if</span> (i &lt; j)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">swap</span>(v[i], v[j]);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">swap</span>(v[i], v[right - <span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">		<span class="built_in">QuickSort</span>(v, left, i - <span class="number">1</span>);</span><br><span class="line">		<span class="built_in">QuickSort</span>(v, i + <span class="number">1</span>, right);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="comment">// 小数组使用插入排序</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">InsertionSort</span>(v, left, right);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="七、堆排序"><a href="#七、堆排序" class="headerlink" title="七、堆排序"></a>七、堆排序</h2><p>原理详见<strong>二叉堆&#x2F;优先队列</strong>（一个二叉数组，每个父节点的儿子必须大于&#x2F;小于父节点）</p>
+<p>先将数组构建成<strong>MAX堆</strong>（父节点大于子节点），之后循环执行<code>deleteMax</code>（删除最大节点，即交换<code>v[0]</code>和<code>v[N-1]</code>并使<code>N--</code>）由此可原地得递增序列且<strong>不需要额外数组</strong>，如果要递减序列构建<strong>MIN堆</strong>即可</p>
+<h3 id="代码实现-6"><a href="#代码实现-6" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下滤，维持堆序性</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">percolateDown</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v,<span class="type">int</span> parent,<span class="type">int</span> N)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (v.<span class="built_in">empty</span>())</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> tmp = v[parent];</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="type">int</span> child;</span><br><span class="line">	<span class="keyword">for</span> (i = parent; i * <span class="number">2</span> + <span class="number">1</span> &lt; N; i = child)</span><br><span class="line">	&#123;</span><br><span class="line">		child = i * <span class="number">2</span> + <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">if</span> (child != N - <span class="number">1</span> &amp;&amp; v[child] &lt; v[child + <span class="number">1</span>])</span><br><span class="line">		&#123;</span><br><span class="line">			child += <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (tmp &lt; v[child])</span><br><span class="line">		&#123;</span><br><span class="line">			v[i] = v[child];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	v[i] = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">HeapSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> N = v.<span class="built_in">size</span>();</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = N / <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) <span class="comment">// buildTree</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">percolateDown</span>(v,i,N);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = N - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">swap</span>(v[<span class="number">0</span>], v[i]); <span class="comment">// deleteMax</span></span><br><span class="line">		<span class="built_in">percolateDown</span>(v,<span class="number">0</span>,i);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序过程-4"><a href="#排序过程-4" class="headerlink" title="排序过程"></a>排序过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">6 4 8 5 2 0 3 1 7 2</span><br><span class="line">7 5 6 4 2 0 3 1 2 8</span><br><span class="line">6 5 3 4 2 0 2 1 7 8</span><br><span class="line">5 4 3 1 2 0 2 6 7 8</span><br><span class="line">4 2 3 1 2 0 5 6 7 8</span><br><span class="line">3 2 0 1 2 4 5 6 7 8</span><br><span class="line">2 2 0 1 3 4 5 6 7 8</span><br><span class="line">2 1 0 2 3 4 5 6 7 8</span><br><span class="line">1 0 2 2 3 4 5 6 7 8</span><br><span class="line">0 1 2 2 3 4 5 6 7 8</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度O(n log n) 并且非常稳定</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/12/14/%E6%8E%92%E5%BA%8F%E5%90%88%E9%9B%86/">http://example.com/2025/12/14/%E6%8E%92%E5%BA%8F%E5%90%88%E9%9B%86/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"># 数据结构</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/12/04/%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/">反转链表</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
