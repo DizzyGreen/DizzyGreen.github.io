@@ -13,7 +13,7 @@
 
 
 
-<title>条款6的摘要与补充 | Xie&#39;s blog</title>
+<title>fork | Xie&#39;s blog</title>
 
 
 
@@ -203,7 +203,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">条款6的摘要与补充</h1>
+            <h1 class="post-title">fork</h1>
             
                 <div class="post-meta">
                     
@@ -212,14 +212,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 9, 2025&nbsp;&nbsp;18:42:41</a>
+                        Date: <a href="#">July 21, 2026&nbsp;&nbsp;18:42:41</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/Effective-C/">Effective C++</a>
+                                <a href="/categories/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">Linux网络编程</a>
                             
                         </span>
                     
@@ -228,23 +228,51 @@
         </header>
 
         <div class="post-content">
-            <h1 id="条款6：若不想使用编译器自动生成的函数，就该明确拒绝"><a href="#条款6：若不想使用编译器自动生成的函数，就该明确拒绝" class="headerlink" title="条款6：若不想使用编译器自动生成的函数，就该明确拒绝"></a><strong>条款6：若不想使用编译器自动生成的函数，就该明确拒绝</strong></h1><h3 id="Explicitly-disallow-the-use-of-complier-generated-functions-you-do-not-want"><a href="#Explicitly-disallow-the-use-of-complier-generated-functions-you-do-not-want" class="headerlink" title="Explicitly disallow the use of complier-generated functions you do not want."></a><strong>Explicitly disallow the use of complier-generated functions you do not want.</strong></h3><hr>
-<h2 id="书中方式"><a href="#书中方式" class="headerlink" title="书中方式"></a>书中方式</h2><p>书中提到，如果要阻止某个类的拷贝行为，可以将该函数的copy构造函数和copy assignment操作符声明为private，或定义一个专门为了阻止copying动作的base class，以防止拷贝行为的发生</p>
-<blockquote>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">class</span> <span class="title class_">HomeForSale</span></span><br><span class="line">&gt;&#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">   ...</span><br><span class="line">   <span class="keyword">private</span>:</span><br><span class="line">   ...</span><br><span class="line">   <span class="built_in">HomeForSale</span>(<span class="type">const</span> HomeForSale&amp;);			<span class="comment">//只有声明</span></span><br><span class="line">   HomeForSale&amp; <span class="keyword">operator</span>=(<span class="type">const</span> HomeForSale&amp;);</span><br><span class="line">&gt;&#125;;</span><br></pre></td></tr></table></figure></blockquote>
+            <h1 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h1><hr>
+<h2 id="pid-t"><a href="#pid-t" class="headerlink" title="pid_t"></a>pid_t</h2><p>表示进程id号</p>
+<p>定义在<code>&lt;sys/types.h&gt;</code></p>
+<p><code>pid_t</code>是<code>_pid_t</code>的别名，后者定义在<code>&lt;bits/types.h&gt;</code></p>
+<p>&#96;&#96;_pid_t<code>本质上是int的别名，所以</code>pid_t&#96;本质上也是int</p>
 <hr>
-<h2 id="现代方式"><a href="#现代方式" class="headerlink" title="现代方式"></a>现代方式</h2><p>使用&#x3D;delete来明确阻止编译器生成对应构造函数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HomeForSale</span> </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">HomeForSale</span>() = <span class="keyword">default</span>;</span><br><span class="line">    <span class="built_in">HomeForSale</span>(<span class="type">const</span> HomeForSale&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    HomeForSale&amp; <span class="keyword">operator</span>=(<span class="type">const</span> HomeForSale&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="getpid-getppid"><a href="#getpid-getppid" class="headerlink" title="getpid&#x2F;getppid"></a>getpid&#x2F;getppid</h2><p><code>#include &lt;unistd.h&gt;</code></p>
+<h3 id="pid-t-getpid"><a href="#pid-t-getpid" class="headerlink" title="pid_t getpid()"></a>pid_t getpid()</h3><p>返回当前进程pid</p>
+<h3 id="pid-t-getppid"><a href="#pid-t-getppid" class="headerlink" title="pid_t getppid()"></a>pid_t getppid()</h3><p>返回当前进程父进程pid</p>
+<hr>
+<h2 id="fork-1"><a href="#fork-1" class="headerlink" title="fork"></a>fork</h2><p><code>fork()</code> 是 <strong>Unix&#x2F;Linux 系统</strong>中用于创建进程的核心系统调用（非 C++ 标准库，属于 POSIX 标准）。它会从当前进程（父进程）复制出一个几乎完全相同的子进程</p>
+<h3 id="头文件与原型"><a href="#头文件与原型" class="headerlink" title="头文件与原型"></a>头文件与原型</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">pid_t</span> <span class="title">fork</span><span class="params">(<span class="type">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
 
-<h2 id="为什么-delete-更好"><a href="#为什么-delete-更好" class="headerlink" title="为什么 = delete 更好"></a>为什么 <code>= delete</code> 更好</h2><h3 id="1-更清晰的错误信息"><a href="#1-更清晰的错误信息" class="headerlink" title="1. 更清晰的错误信息"></a>1. <strong>更清晰的错误信息</strong></h3><ul>
-<li><code>private</code>方式：在类外部尝试拷贝时，报”private访问错误”</li>
-<li><code>= delete</code>方式：直接报”使用了deleted函数”，意图更明确</li>
+
+
+<ul>
+<li><strong>返回值</strong>：<ul>
+<li>在<strong>父进程</strong>中：返回新创建<strong>子进程的 PID</strong></li>
+<li>在<strong>子进程</strong>中：返回 <strong>0</strong></li>
+<li>失败时：返回 <strong>-1</strong></li>
 </ul>
-<h3 id="2-更早的错误检测"><a href="#2-更早的错误检测" class="headerlink" title="2. 更早的错误检测"></a>2. <strong>更早的错误检测</strong></h3><ul>
-<li><code>private</code>方式：在链接阶段才报错（因为函数只有声明没有定义）</li>
-<li><code>= delete</code>方式：在编译阶段就报错，更快发现问题</li>
+</li>
 </ul>
-<h3 id="3-代码更直观"><a href="#3-代码更直观" class="headerlink" title="3. 代码更直观"></a>3. <strong>代码更直观</strong></h3><p><code>= delete</code> 明确表达了”禁止使用”的意图，代码可读性更强。</p>
+<h3 id="工作原理（写时拷贝）"><a href="#工作原理（写时拷贝）" class="headerlink" title="工作原理（写时拷贝）"></a>工作原理（写时拷贝）</h3><ul>
+<li><code>fork</code> 刚调用时，子进程<strong>拷贝父进程的页表</strong>，但物理内存与父进程共享（只读）</li>
+<li>当任一进程尝试<strong>写入</strong>内存时，才会触发“写时拷贝（COW）”，真正复制被修改的页面</li>
+<li>这种机制使得 <code>fork</code> 非常高效，避免了不必要的内存复</li>
+</ul>
+<h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">-1</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">perror</span>(<span class="string">&quot;fork失败&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 子进程代码</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;子进程: PID=%d, 父进程PPID=%d\n&quot;</span>, <span class="built_in">getpid</span>(), <span class="built_in">getppid</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 父进程代码</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;父进程: 子进程PID=%d\n&quot;</span>, pid);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="与-exec-族函数配合"><a href="#与-exec-族函数配合" class="headerlink" title="与 exec 族函数配合"></a>与 <code>exec</code> 族函数配合</h3><p><code>fork</code> 通常与 <code>exec</code> 一起使用：</p>
+<ul>
+<li><code>fork</code> 复制进程，子进程拥有独立的地址空间</li>
+<li>子进程调用 <code>exec</code><strong>替换自身映像</strong>，执行新程序</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (pid == <span class="number">0</span>) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">execlp</span>(<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, <span class="literal">NULL</span>);  <span class="comment">// 子进程变成&quot;ls&quot;命令</span></span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);  <span class="comment">// 执行失败才到这一行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="需要避免的陷阱"><a href="#需要避免的陷阱" class="headerlink" title="需要避免的陷阱"></a>需要避免的陷阱</h3><ul>
+<li><strong>孤儿进程</strong>：父进程先于子进程结束，子进程会被 <code>init</code>（PID&#x3D;1）收养</li>
+<li><strong>僵尸进程</strong>：子进程结束但父进程未调用 <code>wait()</code> 回收其状态信息，会占用进程表资源。父进程需用 <code>wait()</code> 或 <code>waitpid()</code> 处理</li>
+<li><strong>文件描述符共享</strong>：<code>fork</code> 后，父子进程共享已打开的文件描述符（如 socket），注意关闭不必要的端以避免混乱</li>
+<li><strong>多线程与 fork</strong>：只有调用 <code>fork</code> 的线程会被复制，其他线程会消失，极易导致死锁。多线程程序中建议用 <code>posix_spawn</code> 或 <code>vfork</code></li>
+</ul>
 
         </div>
 
@@ -259,7 +287,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://example.com/2025/10/09/%E6%9D%A1%E6%AC%BE6%E7%9A%84%E6%91%98%E8%A6%81%E4%B8%8E%E8%A1%A5%E5%85%85/">http://example.com/2025/10/09/%E6%9D%A1%E6%AC%BE6%E7%9A%84%E6%91%98%E8%A6%81%E4%B8%8E%E8%A1%A5%E5%85%85/</a></span>
+                        <span><a href="http://example.com/2026/07/21/fork/">http://example.com/2026/07/21/fork/</a></span>
                     </p>
                 
                 
@@ -283,9 +311,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/C/"># C++</a>
-                    
-                        <a href="/tags/Effective/"># Effective</a>
+                        <a href="/tags/Linux-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"># Linux 网络编程</a>
                     
                         
                 </span>
@@ -298,10 +324,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/10/19/C++-%E7%BA%BF%E7%A8%8B%E5%BA%93%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">C++ 线程库的基本使用</a>
+                <a class="prev" rel="prev" href="/2026/07/21/exec%E6%97%8F%E5%87%BD%E6%95%B0/">exec族函数</a>
             
             
-            <a class="next" rel="next" href="/2025/09/25/C++%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%93%8D%E4%BD%9C%E7%AC%A6/">C++类型转换操作符</a>
+            <a class="next" rel="next" href="/2026/07/13/new%E8%AF%A6%E8%A7%A3/">new详解</a>
             
         </section>
 

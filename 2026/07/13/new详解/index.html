@@ -13,7 +13,7 @@
 
 
 
-<title>条款6的摘要与补充 | Xie&#39;s blog</title>
+<title>new详解 | Xie&#39;s blog</title>
 
 
 
@@ -203,7 +203,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">条款6的摘要与补充</h1>
+            <h1 class="post-title">new详解</h1>
             
                 <div class="post-meta">
                     
@@ -212,14 +212,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 9, 2025&nbsp;&nbsp;18:42:41</a>
+                        Date: <a href="#">July 13, 2026&nbsp;&nbsp;18:42:41</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/Effective-C/">Effective C++</a>
+                                <a href="/categories/C/">C++</a>
                             
                         </span>
                     
@@ -228,24 +228,55 @@
         </header>
 
         <div class="post-content">
-            <h1 id="条款6：若不想使用编译器自动生成的函数，就该明确拒绝"><a href="#条款6：若不想使用编译器自动生成的函数，就该明确拒绝" class="headerlink" title="条款6：若不想使用编译器自动生成的函数，就该明确拒绝"></a><strong>条款6：若不想使用编译器自动生成的函数，就该明确拒绝</strong></h1><h3 id="Explicitly-disallow-the-use-of-complier-generated-functions-you-do-not-want"><a href="#Explicitly-disallow-the-use-of-complier-generated-functions-you-do-not-want" class="headerlink" title="Explicitly disallow the use of complier-generated functions you do not want."></a><strong>Explicitly disallow the use of complier-generated functions you do not want.</strong></h3><hr>
-<h2 id="书中方式"><a href="#书中方式" class="headerlink" title="书中方式"></a>书中方式</h2><p>书中提到，如果要阻止某个类的拷贝行为，可以将该函数的copy构造函数和copy assignment操作符声明为private，或定义一个专门为了阻止copying动作的base class，以防止拷贝行为的发生</p>
-<blockquote>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">class</span> <span class="title class_">HomeForSale</span></span><br><span class="line">&gt;&#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">   ...</span><br><span class="line">   <span class="keyword">private</span>:</span><br><span class="line">   ...</span><br><span class="line">   <span class="built_in">HomeForSale</span>(<span class="type">const</span> HomeForSale&amp;);			<span class="comment">//只有声明</span></span><br><span class="line">   HomeForSale&amp; <span class="keyword">operator</span>=(<span class="type">const</span> HomeForSale&amp;);</span><br><span class="line">&gt;&#125;;</span><br></pre></td></tr></table></figure></blockquote>
+            <h1 id="new-详解"><a href="#new-详解" class="headerlink" title="new 详解"></a>new 详解</h1><hr>
+<h2 id="new-和-malloc-的区别"><a href="#new-和-malloc-的区别" class="headerlink" title="new 和 malloc  的区别"></a>new 和 malloc  的区别</h2><ul>
+<li><strong>本质</strong>：<code>new</code> 是 <strong>运算符</strong>（可重载），<code>malloc</code> 是 <strong>函数</strong>（不可重载）</li>
+<li><strong>返回类型</strong>：<code>new</code> 返回 <strong>类型安全</strong> 的指针（<code>T*</code>），无需强转；<code>malloc</code> 返回 <code>void*</code>，<strong>必须强转</strong></li>
+<li><strong>大小计算</strong>：<code>new</code> 由编译器自动计算，<code>malloc</code> 需<strong>手动传字节数</strong></li>
+<li><strong>构造&#x2F;析构</strong>：<code>new</code> 会调用<strong>构造函数</strong>，<code>delete</code> 会调用<strong>析构函数</strong>；<code>malloc</code>&#x2F;<code>free</code> <strong>不会</strong></li>
+<li><strong>异常处理</strong>：<code>new</code> 失败默认抛出 <code>std::bad_alloc</code> 异常；<code>malloc</code> 失败返回 <strong>NULL</strong></li>
+</ul>
 <hr>
-<h2 id="现代方式"><a href="#现代方式" class="headerlink" title="现代方式"></a>现代方式</h2><p>使用&#x3D;delete来明确阻止编译器生成对应构造函数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HomeForSale</span> </span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">HomeForSale</span>() = <span class="keyword">default</span>;</span><br><span class="line">    <span class="built_in">HomeForSale</span>(<span class="type">const</span> HomeForSale&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    HomeForSale&amp; <span class="keyword">operator</span>=(<span class="type">const</span> HomeForSale&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="nothrow-new"><a href="#nothrow-new" class="headerlink" title="nothrow new"></a>nothrow new</h2><p><code>nothrow new</code> 是 C++ 提供的一种<strong>内存分配失败时不抛异常</strong>的 <code>new</code> 使用方式</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;new&gt;</span>  <span class="comment">// 必须包含</span></span></span><br><span class="line"><span class="type">int</span>* p = <span class="built_in">new</span> (std::nothrow) <span class="type">int</span>[<span class="number">100</span>]; <span class="comment">// 失败时返回nullptr</span></span><br><span class="line"><span class="keyword">if</span> (p == <span class="literal">nullptr</span>) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 内存分配失败处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>nothrow new</code> 只保证<strong>分配内存</strong>不抛异常。但如果对象<strong>构造函数内部</strong>抛异常，程序依然会按正常异常机制传播，此时不会返回 <code>nullptr</code></p>
+<hr>
+<h2 id="operator-new"><a href="#operator-new" class="headerlink" title="::operator new"></a>::operator new</h2><p><strong><code>operator new</code> 是C++中负责</strong>内存分配底层机制<strong>的全局函数</strong>，与之配套的是<code>::operator delete</code></p>
+<p><strong><code>new</code> 运算符</strong> &#x3D; <strong><code>operator new</code> 函数</strong>（分配内存） + <strong>构造函数调用</strong>（构造对象）</p>
+<p>当你写下 <code>new T()</code> 时，编译器做了两件事：</p>
+<ol>
+<li>调用 <strong><code>operator new(sizeof(T))</code></strong> 分配原始内存（这一步和 <code>malloc</code> 类似，但失败抛异常）</li>
+<li>在该内存上调用 <strong><code>T</code> 的构造函数</strong>(<code>placement new</code>)</li>
+</ol>
+<p>而如果你直接调用 <code>operator new</code>（如 <code>::operator new(sizeof(T))</code>），你得到的只是<strong>未初始化的原始内存</strong></p>
+<hr>
+<h2 id="placement-new"><a href="#placement-new" class="headerlink" title="placement new"></a>placement new</h2><p><code>placement new</code> 是 C++ 中一种特殊的 <code>new</code> 表达式，它<strong>在已分配的内存上构造对象</strong>，而不分配新内存</p>
+<p>要理解 <code>placement new</code>，首先要明白标准的 <code>new</code> 操作符实际上做了两件事：</p>
+<ol>
+<li><strong>分配内存</strong>：调用 <code>operator new</code> 函数，在堆上分配足够大小的内存</li>
+<li><strong>构造对象</strong>：在刚刚分配好的那块内存地址上，调用对象的构造函数，初始化对象</li>
+</ol>
+<p>例如，代码 <code>MyClass* obj = new MyClass;</code> 等价于：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 分配内存（不调用构造函数）</span></span><br><span class="line"><span class="type">void</span>* memory = <span class="keyword">operator</span> <span class="built_in">new</span>(<span class="built_in">sizeof</span>(MyClass));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 在指定内存上构造对象</span></span><br><span class="line">MyClass* obj = <span class="built_in">new</span>(memory) MyClass; <span class="comment">// 这就是 placement new</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="为什么-delete-更好"><a href="#为什么-delete-更好" class="headerlink" title="为什么 = delete 更好"></a>为什么 <code>= delete</code> 更好</h2><h3 id="1-更清晰的错误信息"><a href="#1-更清晰的错误信息" class="headerlink" title="1. 更清晰的错误信息"></a>1. <strong>更清晰的错误信息</strong></h3><ul>
-<li><code>private</code>方式：在类外部尝试拷贝时，报”private访问错误”</li>
-<li><code>= delete</code>方式：直接报”使用了deleted函数”，意图更明确</li>
-</ul>
-<h3 id="2-更早的错误检测"><a href="#2-更早的错误检测" class="headerlink" title="2. 更早的错误检测"></a>2. <strong>更早的错误检测</strong></h3><ul>
-<li><code>private</code>方式：在链接阶段才报错（因为函数只有声明没有定义）</li>
-<li><code>= delete</code>方式：在编译阶段就报错，更快发现问题</li>
-</ul>
-<h3 id="3-代码更直观"><a href="#3-代码更直观" class="headerlink" title="3. 代码更直观"></a>3. <strong>代码更直观</strong></h3><p><code>= delete</code> 明确表达了”禁止使用”的意图，代码可读性更强。</p>
+<p><strong>Placement new 的本质就是只完成上述第二步工作：在已分配好的内存上构造对象。</strong> 它不负责内存分配，只负责对象构造</p>
+<p><strong>语法：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;new&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> (address) Type;</span><br><span class="line"><span class="keyword">new</span> (address) <span class="built_in">Type</span>(arguments);</span><br></pre></td></tr></table></figure>
 
+
+
+<ul>
+<li><code>address</code>： 一个指针，指向一块<strong>已经存在</strong>的、足够容纳 <code>Type</code> 类型对象且对齐正确的内存</li>
+<li><code>Type</code>： 要构造的对象的类型</li>
+<li><code>arguments</code>： （可选）传递给 <code>Type</code> 的构造函数的参数</li>
+</ul>
+<h4 id="必须手动调用析构函数"><a href="#必须手动调用析构函数" class="headerlink" title="必须手动调用析构函数"></a>必须手动调用析构函数</h4><p>这是使用 <code>placement new</code> 最重要也是最容易忘记的一点</p>
+<ul>
+<li>标准 <code>delete</code> 操作符会先调用析构函数，再调用 <code>operator delete</code> 释放内存</li>
+<li>对于 placement new 创建的对象，内存不是你通过 <code>new</code> 分配的，所以你不能用 <code>delete</code></li>
+<li>你必须<strong>显式地</strong>直接调用析构函数来结束对象的生命周期</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">obj-&gt;~<span class="built_in">MyClass</span>(); <span class="comment">// 正确做法</span></span><br><span class="line"><span class="comment">// delete obj;   // 错误！会导致未定义行为</span></span><br></pre></td></tr></table></figure>
         </div>
 
         
@@ -259,7 +290,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://example.com/2025/10/09/%E6%9D%A1%E6%AC%BE6%E7%9A%84%E6%91%98%E8%A6%81%E4%B8%8E%E8%A1%A5%E5%85%85/">http://example.com/2025/10/09/%E6%9D%A1%E6%AC%BE6%E7%9A%84%E6%91%98%E8%A6%81%E4%B8%8E%E8%A1%A5%E5%85%85/</a></span>
+                        <span><a href="http://example.com/2026/07/13/new%E8%AF%A6%E8%A7%A3/">http://example.com/2026/07/13/new%E8%AF%A6%E8%A7%A3/</a></span>
                     </p>
                 
                 
@@ -285,8 +316,6 @@
                     
                         <a href="/tags/C/"># C++</a>
                     
-                        <a href="/tags/Effective/"># Effective</a>
-                    
                         
                 </span>
             </div>
@@ -298,10 +327,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/10/19/C++-%E7%BA%BF%E7%A8%8B%E5%BA%93%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">C++ 线程库的基本使用</a>
+                <a class="prev" rel="prev" href="/2026/07/21/fork/">fork</a>
             
             
-            <a class="next" rel="next" href="/2025/09/25/C++%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%93%8D%E4%BD%9C%E7%AC%A6/">C++类型转换操作符</a>
+            <a class="next" rel="next" href="/2026/07/11/constexpr-%E5%92%8C-if-constexpr/">constexpr 和 if constexpr</a>
             
         </section>
 

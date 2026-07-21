@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="DizzyGreen">
+
+
+
+
+
+<title>constexpr 和 if constexpr | Xie&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Xie&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Xie&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">constexpr 和 if constexpr</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">DizzyGreen</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 11, 2026&nbsp;&nbsp;18:42:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/C/">C++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="constexpr-和-if-constexpr"><a href="#constexpr-和-if-constexpr" class="headerlink" title="constexpr 和 if constexpr"></a>constexpr 和 if constexpr</h1><p><code>constexpr</code> 是 C++11 引入的一个关键字，并在后续标准（C++14, C++17, C++20）中不断增强了其能力。它的核心目标是<strong>允许在编译时计算表达式或函数的值</strong>，从而将运行时的计算压力转移到编译期</p>
+<hr>
+<h3 id="编译时常量"><a href="#编译时常量" class="headerlink" title="编译时常量"></a>编译时常量</h3><p>在 <code>constexpr</code> 出现之前，我们使用 <code>const</code> 来定义常量。但 <code>const</code> 并不总是编译时常量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是一个运行时常量</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> size = <span class="built_in">get_size</span>(); <span class="comment">// get_size() 在运行时才能确定返回值</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这是一个编译时常量</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> size = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>constexpr</code> 则明确告诉编译器：<strong>这个变量或函数必须在编译时就能计算出结果</strong></p>
+<hr>
+<h3 id="constexpr-变量"><a href="#constexpr-变量" class="headerlink" title="constexpr 变量"></a>constexpr 变量</h3><p>用于声明变量的值是编译时常量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> size = <span class="number">100</span>;                    <span class="comment">// 正确，字面量</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> array_size = size * <span class="number">2</span> + <span class="number">1</span>;     <span class="comment">// 正确，常量表达式</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> bad_size = x;               <span class="comment">// 错误！x 不是编译时常量</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>关键点：</strong></p>
+<ul>
+<li><code>constexpr</code> 变量必须在声明时初始化</li>
+<li>初始化的表达式必须是<strong>常量表达式</strong>（即它的值在编译时可知）</li>
+</ul>
+<hr>
+<h3 id="constexpr-函数"><a href="#constexpr-函数" class="headerlink" title="constexpr 函数"></a>constexpr 函数</h3><p>用于声明函数可以在编译时被求值（如果传入的参数是编译时常量）</p>
+<h4 id="C-11-下的-constexpr-函数"><a href="#C-11-下的-constexpr-函数" class="headerlink" title="C++11 下的 constexpr 函数"></a>C++11 下的 constexpr 函数</h4><ul>
+<li>函数体必须只有一个 <code>return</code> 语句（不能有变量定义、循环、<code>if</code> 等）</li>
+<li>返回类型必须是<strong>字面类型</strong>（通常是基本类型、自定义类型需要满足特定条件）</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// C++11 风格的 constexpr 函数</span></span><br><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="type">int</span> <span class="title">factorial</span><span class="params">(<span class="type">int</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 只能使用递归，不能使用循环</span></span><br><span class="line">    <span class="keyword">return</span> n &lt;= <span class="number">1</span> ? <span class="number">1</span> : (n * <span class="built_in">factorial</span>(n - <span class="number">1</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> fac10 = <span class="built_in">factorial</span>(<span class="number">10</span>); <span class="comment">// 编译时计算</span></span><br><span class="line"><span class="type">int</span> x = <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> fac_x = <span class="built_in">factorial</span>(x);            <span class="comment">// 运行时计算</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="C-14-及以后下的-constexpr-函数"><a href="#C-14-及以后下的-constexpr-函数" class="headerlink" title="C++14 及以后下的 constexpr 函数"></a>C++14 及以后下的 constexpr 函数</h4><ul>
+<li>函数体内可以有多条语句</li>
+<li>可以有局部变量（但不能是 <code>static</code> 或 <code>thread_local</code>）</li>
+<li>可以有 <code>if</code>, <code>switch</code>, <code>for</code>, <code>while</code> 等控制流语句</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// C++14 风格的 constexpr 函数</span></span><br><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="type">int</span> <span class="title">factorial</span><span class="params">(<span class="type">int</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> result = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) </span><br><span class="line">    &#123;</span><br><span class="line">        result *= i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="type">int</span> <span class="title">fibonacci</span><span class="params">(<span class="type">int</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">0</span>, b = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>; i &lt;= n; ++i) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> next = a + b;</span><br><span class="line">        a = b;</span><br><span class="line">        b = next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> fac10 = <span class="built_in">factorial</span>(<span class="number">10</span>);     <span class="comment">// 编译时计算</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> fib10 = <span class="built_in">fibonacci</span>(<span class="number">10</span>);     <span class="comment">// 编译时计算</span></span><br></pre></td></tr></table></figure>
+
+<p><code>constexpr</code> 函数就像一个“双重身份”的函数</p>
+<ul>
+<li>当传入的参数是<strong>编译时常量</strong>时，它会在编译期被计算，结果直接替换到代码中</li>
+<li>当传入的参数是<strong>运行时常量</strong>时，它就像一个普通的函数一样在运行时被调用</li>
+</ul>
+<p>这使得你可以写一份代码，同时在编译时和运行时使用</p>
+<hr>
+<h3 id="constexpr-与自定义类型"><a href="#constexpr-与自定义类型" class="headerlink" title="constexpr 与自定义类型"></a>constexpr 与自定义类型</h3><p><code>constexpr</code> 也可以用于自定义类型，这允许我们在编译时创建和操作对象</p>
+<ul>
+<li><code>constexpr</code> <strong>构造函数</strong>：用于在编译时初始化对象</li>
+<li><code>constexpr</code> <strong>成员函数</strong>：可以在编译时调用</li>
+</ul>
+<p><strong>要求：</strong></p>
+<ul>
+<li>构造函数体必须为空</li>
+<li>必须使用常量表达式来初始化所有成员变量</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span> </span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// constexpr 构造函数</span></span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="title">Point</span><span class="params">(<span class="type">double</span> x_val = <span class="number">0</span>, <span class="type">double</span> y_val = <span class="number">0</span>)</span></span></span><br><span class="line"><span class="function">        : x(x_val), y(y_val) </span></span><br><span class="line"><span class="function">    &#123;</span>&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// constexpr 成员函数</span></span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="type">double</span> <span class="title">length</span><span class="params">()</span> <span class="type">const</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> x * x + y * y; <span class="comment">// C++11 中不能有 sqrt，因为 sqrt 不是 constexpr</span></span><br><span class="line">                               <span class="comment">// C++20 后 std::sqrt 可以是 constexpr</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> x, y;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 编译时创建一个 Point 对象并调用其成员函数</span></span><br><span class="line"><span class="function"><span class="keyword">constexpr</span> Point <span class="title">p1</span><span class="params">(<span class="number">3.0</span>, <span class="number">4.0</span>)</span></span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">double</span> len = p<span class="number">1.l</span>ength(); <span class="comment">// len 在编译时被计算为 25.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用于模板元编程和容器大小</span></span><br><span class="line">std::array&lt;<span class="type">int</span>, <span class="keyword">static_cast</span>&lt;<span class="type">int</span>&gt;(p<span class="number">1.l</span>ength())&gt; arr; <span class="comment">// 数组大小为 25</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="if-constexpr-C-17"><a href="#if-constexpr-C-17" class="headerlink" title="if constexpr (C++17)"></a>if constexpr (C++17)</h3><p>C++17 引入了 <code>if constexpr</code>，它允许在编译时进行条件判断，并丢弃不满足条件的分支代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">get_value</span><span class="params">(T t)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 普通 if：两个分支都会被编译，可能导致编译错误</span></span><br><span class="line">    <span class="keyword">if</span> (std::is_pointer_v&lt;T&gt;) </span><br><span class="line">    &#123;</span><br><span class="line">         <span class="keyword">return</span> *t; <span class="comment">// 如果 T 是 int，这里会报错</span></span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">    &#123;</span><br><span class="line">         <span class="keyword">return</span> t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">get_value</span><span class="params">(T t)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// if constexpr：只有一个分支会被编译</span></span><br><span class="line">    <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(std::is_pointer_v&lt;T&gt;)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> *t; <span class="comment">// 只有当 T 是指针类型时，这个分支才会被编译</span></span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> t;  <span class="comment">// 只有当 T 不是指针类型时，这个分支才会被编译</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line">    <span class="type">int</span>* ptr = &amp;x;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">get_value</span>(x) &lt;&lt; std::endl;   <span class="comment">// 调用 else 分支</span></span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">get_value</span>(ptr) &lt;&lt; std::endl; <span class="comment">// 调用 if 分支</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>DizzyGreen</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2026/07/11/constexpr-%E5%92%8C-if-constexpr/">http://example.com/2026/07/11/constexpr-%E5%92%8C-if-constexpr/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C-C-11-C-14-C-17/"># C++ C++11 C++14 C++17</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2026/07/13/new%E8%AF%A6%E8%A7%A3/">new详解</a>
+            
+            
+            <a class="next" rel="next" href="/2026/07/08/inline%E5%92%8CODR%E8%B1%81%E5%85%8D/">inline和ODR豁免</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© DizzyGreen | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
